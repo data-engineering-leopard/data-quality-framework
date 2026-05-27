@@ -1,0 +1,127 @@
+tables:
+
+  - name: customers
+    path: dbfs:/dq_framework/data/customers
+    rules:
+
+      - rule_id: customers_001
+        type: not_null
+        column: customer_id
+        severity: critical
+        description: Every customer must have an ID
+
+      - rule_id: customers_002
+        type: unique
+        column: customer_id
+        severity: critical
+        description: Customer IDs must be unique
+
+      - rule_id: customers_003
+        type: not_null
+        column: email
+        severity: warning
+        description: Email should be present for marketing
+
+      - rule_id: customers_004
+        type: regex
+        column: email
+        pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$"
+        severity: warning
+        description: Email must be a valid format
+
+      - rule_id: customers_005
+        type: row_count
+        min_count: 100
+        severity: critical
+        description: Customers table must have at least 100 rows
+
+
+  - name: products
+    path: dbfs:/dq_framework/data/products
+    rules:
+
+      - rule_id: products_001
+        type: not_null
+        column: product_id
+        severity: critical
+        description: Every product must have an ID
+
+      - rule_id: products_002
+        type: not_null
+        column: product_name
+        severity: critical
+        description: Every product must have a name
+
+      - rule_id: products_003
+        type: regex
+        column: sku
+        pattern: "^SKU-[A-Z]{3}-[0-9]{4}$"
+        severity: warning
+        description: SKU must follow format SKU-ABC-1234
+
+      - rule_id: products_004
+        type: range
+        column: price
+        min: 0
+        max: 10000
+        severity: critical
+        description: Price must be between 0 and 10,000
+
+      - rule_id: products_005
+        type: row_count
+        min_count: 10
+        severity: critical
+        description: Products table must have at least 10 rows
+
+
+  - name: orders
+    path: dbfs:/dq_framework/data/orders
+    rules:
+
+      - rule_id: orders_001
+        type: not_null
+        column: order_id
+        severity: critical
+        description: Every order must have an ID
+
+      - rule_id: orders_002
+        type: unique
+        column: order_id
+        severity: critical
+        description: Order IDs must be unique
+
+      - rule_id: orders_003
+        type: not_null
+        column: order_amount
+        severity: critical
+        description: Every order must have an amount
+
+      - rule_id: orders_004
+        type: range
+        column: order_amount
+        min: 0
+        max: 100000
+        severity: critical
+        description: Order amount must be between 0 and 100,000
+
+      - rule_id: orders_005
+        type: referential_integrity
+        column: customer_id
+        reference_table: dbfs:/dq_framework/data/customers
+        reference_column: customer_id
+        severity: critical
+        description: customer_id must exist in the customers table
+
+      - rule_id: orders_006
+        type: referential_integrity
+        column: product_id
+        reference_table: dbfs:/dq_framework/data/products
+        reference_column: product_id
+        severity: warning
+        description: product_id must exist in the products table
+
+      - rule_id: orders_007
+        type: row_count
+        min_count: 100
+        severity: critical
+        description: Orders table must have at least 100 rows
